@@ -1,0 +1,33 @@
+question_type,gpt3.5_ans,gpt3.5_pts_earned,bard_ans,bard_pts_earned
+q,b),1,e,0
+q,c) ,1,c,1
+qm,d),1,d,1
+q,d),1,e,0
+q,c),0,c,0
+qm,b),1,b,1
+q,a),0,e,1
+q,e),0,b,0
+q,c),1,c,1
+qm,e),0,b,1
+qm,e),1,c,0
+q,a),1,a,1
+qm,b),1,d,0
+qdm,e),0,d,0
+qm,e),0,c,1
+q,b),0,b,0
+q,b),0,b,0
+qm,c),1,b,0
+qm,b),1,c,0
+qm,a),1,b,0
+q,e),1,e,1
+qm,d),0,d,0
+qm,e),1,c,0
+qm,b),0,c,0
+q,d),0,b,1
+qm,e),0,a,0
+q,b),0,b,0
+q,e),0,c,1
+q,d),0,d,0
+q,c),1,c,1
+q,"a), d)",1,d,0
+q,e),0,e,0

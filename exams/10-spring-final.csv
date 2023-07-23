@@ -1,0 +1,553 @@
+question_type,gpt3.5_ans,gpt3.5_pts_earned,bard_ans,bard_pts_earned
+m,"Direct Pointers:
+Total direct pointers = 12
+Maximum direct data size = Total direct pointers * Block size
+= 12 * 4KB
+= 48KB
+
+Indirect Pointers:
+Size of a direct pointer = Disk addresses size = 4 bytes
+Size of a block of direct pointers = Block size = 4KB = 4 * 1024 bytes
+
+Maximum direct pointers per block of direct pointers = Size of a block of direct pointers / Size 
+of a direct pointer
+= (4 * 1024) bytes / 4 bytes
+= 1024 pointers
+
+Maximum indirect data size = Number of direct pointers per block of direct pointers * Block size
+= Maximum direct pointers per block of direct pointers * Block size
+= 1024 * 4KB
+= 4MB
+
+Double-Indirect Pointers:
+Size of an indirect pointer = Disk addresses size = 4 bytes
+Size of a block of indirect pointers = Block size = 4KB = 4 * 1024 bytes
+
+Maximum indirect pointers per block of indirect pointers = Size of a block of indirect pointers
+ / Size of an indirect pointer
+= (4 * 1024) bytes / 4 bytes
+= 1024 pointers
+
+Maximum double-indirect data size = Maximum indirect pointers per block of indirect pointers 
+* Maximum indirect data size
+= 1024 * 4MB
+= 4GB",5.0,"4096 * 12 + 4096 * 2^10 + 4096 * 2^20
+
+
+off_t block_size = lseek(STDOUT_FILENO, 0, SEEK_CUR);
+  if (block_size < 0) {
+    perror(""lseek"");
+    exit(1);
+  }
+
+  // Calculate the maximum file size.
+  int direct_pointers = 12;
+  int indirect_pointers = 10;
+  int double_indirect_pointers = 10;
+  off_t max_size = block_size * direct_pointers;
+  max_size += block_size * (1 << indirect_pointers);
+  max_size += block_size * (1 << (2 * double_indirect_pointers));
+
+  // Print the maximum file size.
+  printf(""The maximum file size is: %lld\n"", max_size);",3.0
+c,"#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
+
+int main() {
+    // Open a temporary file
+    int fd = open(""temp_file"", O_CREAT | O_WRONLY, 0644);
+    if (fd == -1) {
+        perror(""Error opening file"");
+        return 1;
+    }
+
+    // Seek to the maximum possible offset
+    off_t offset = lseek(fd, 0, SEEK_END);
+    if (offset == -1) {
+        perror(""Error seeking file"");
+        close(fd);
+        return 1;
+    }
+
+    // Write a single byte to the maximum offset
+    if (write(fd, """", 1) == -1) {
+        perror(""Error writing file"");
+        close(fd);
+        return 1;
+    }
+
+    // Close the file
+    if (close(fd) == -1) {
+        perror(""Error closing file"");
+        return 1;
+    }
+
+    // Calculate the maximum file size
+    off_t max_file_size = offset + 1;
+
+    // Delete the temporary file
+    if (unlink(""temp_file"") == -1) {
+        perror(""Error deleting file"");
+        return 1;
+    }
+
+    // Print the maximum file size
+    printf(""Maximum file size: %lld bytes\n"", (long long)max_file_size);
+
+    return 0;
+}",1.5,"struct transaction {
+  int numblocks;
+  unsigned int destinations[MAX_BLOCKS];
+  unsigned char *blockarray[MAX_BLOCKS];
+};
+
+void replay_transaction(struct transaction *t) {
+  for (int i = 0; i < t->numblocks; i++) {
+    // Get the block number and the data.
+    int block = t->destinations[i];
+    unsigned char *data = t->blockarray[i];
+
+    // Write the data to the disk.
+    WRITE(block, data);
+  }
+}
+
+int main() {
+  // Create a transaction structure.
+  struct transaction t;
+  t.numblocks = 3;
+  t.destinations[0] = 10;
+  t.destinations[1] = 20;
+  t.destinations[2] = 30;
+  t.blockarray[0] = malloc(1024);
+  t.blockarray[1] = malloc(1024);
+  t.blockarray[2] = malloc(1024);
+
+  // Fill in the data in the blocks.
+  for (int i = 0; i < t.numblocks; i++) {
+    memset(t.blockarray[i], i, 1024);
+  }
+
+  // Replay the transaction.
+  replay_transaction(&t);
+
+  // Free the memory.
+  for (int i = 0; i < t.numblocks; i++) {
+    free(t.blockarray[i]);
+  }
+
+  return 0;
+}",10.0
+c,"#include <stdio.h>
+
+#define MAX_BLOCKS 100
+
+struct transaction {
+    int numblocks;
+    unsigned int destinations[MAX_BLOCKS];
+    unsigned char *blockarray[MAX_BLOCKS];
+};
+
+void WRITE(int block, unsigned char *data) {
+    // Write data to the specified block
+    printf(""Writing data to block %d\n"", block);
+    // Actual implementation would write data to the disk
+}
+
+void replay_journal_entry(struct transaction *t) {
+    int i;
+
+    for (i = 0; i < t->numblocks; i++) {
+        unsigned int destination = t->destinations[i];
+        unsigned char *block = t->blockarray[i];
+
+        // Write the block to its final destination
+        WRITE(destination, block);
+    }
+}
+
+int main() {
+    // Example transaction data
+    struct transaction t_data = {
+        .numblocks = 3,
+        .destinations = {10, 20, 30},
+        .blockarray = {
+            (unsigned char *)""Block 1"",
+            (unsigned char *)""Block 2"",
+            (unsigned char *)""Block 3""
+        }
+    };
+
+    // Create a pointer to the transaction structure
+    struct transaction *t = &t_data;
+
+    // Replay the journal entry and write each block to its final destination
+    replay_journal_entry(t);
+
+    return 0;
+}",10.0,"struct inode_t {
+  int direct[10];
+};
+
+struct update_t {
+  int inumber;
+  struct inode_t inode;
+  int offset;
+  char data[4096];
+};
+
+struct segment_t {
+  int disk_addr;
+  struct update_t updates[MAX_UPDATES];
+};
+
+void cleaner(struct segment_t *segment) {
+  for (int i = 0; i < MAX_UPDATES; i++) {
+    // Get the inode number from the update.
+    int inumber = segment->updates[i].inumber;
+
+    // Check if the inode is live.
+    int inode_disk_addr = imap[inumber];
+    if (inode_disk_addr == 0) {
+      printf(""DEAD"");
+    } else {
+      printf(""LIVE"");
+    }
+  }
+}
+
+int main() {
+  // Initialize the inode map.
+  for (int i = 0; i < MAX_INODES; i++) {
+    imap[i] = 0;
+  }
+
+  // Create a segment.
+  struct segment_t segment;
+  segment.disk_addr = 10;
+
+  // Add some updates to the segment.
+  segment.updates[0].inumber = 1;
+  segment.updates[0].offset = 0;
+  segment.updates[1].inumber = 2;
+  segment.updates[1].offset = 1;
+
+  // Run the cleaner.
+  cleaner(&segment);
+
+  return 0;
+}",7.0
+c,"#include <stdio.h>
+
+#define MAX_INODES 100
+#define MAX_UPDATES 100
+
+typedef struct __inode_t {
+    int direct[10];
+} inode_t;
+
+typedef struct __update_t {
+    int inumber;
+    inode_t inode;
+    int offset;
+    char data[4096];
+} update_t;
+
+typedef struct __segment_t {
+    int disk_addr;
+    update_t updates[MAX_UPDATES];
+} segment_t;
+
+void emulate_cleaner(segment_t *segment) {
+    int i;
+
+    for (i = 0; i < MAX_UPDATES; i++) {
+        update_t update = segment->updates[i];
+        int inumber = update.inumber;
+
+        if (inumber >= 0 && inumber < MAX_INODES) {
+            if (update.inode.direct[0] != -1) {
+                printf(""LIVE\n"");
+            } else {
+                printf(""DEAD\n"");
+            }
+        }
+    }
+}
+
+int main() {
+    // Example segment data
+    segment_t segment_data = {
+        .disk_addr = 12345,
+        .updates = {
+            { .inumber = 0, .inode = { .direct = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10} }, .offset = 0, .data = ""Update 1"" },
+            { .inumber = 1, .inode = { .direct = {-1} }, .offset = 0, .data = ""Update 2"" },
+            { .inumber = 2, .inode = { .direct = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10} }, .offset = 0, .data = ""Update 3"" },
+            { .inumber = 3, .inode = { .direct = {-1} }, .offset = 0, .data = ""Update 4"" },
+        }
+    };
+
+    // Create a pointer to the segment structure
+    segment_t *segment = &segment_data;
+
+    // Emulate the cleaner by checking live and dead inodes in the segment
+    emulate_cleaner(segment);
+
+    return 0;
+}",4.0,"MAX = 256
+STRIDE = 8
+
+
+To achieve a TLB miss on every access to the array data, we need to set MAX to a value that is less than the size of the TLB, and STRIDE to a value that is a multiple of the page size.
+If MAX is too high, then we will not be able to cause a TLB miss on every access to the array data.
+If MAX is too low, then we will not be able to achieve a TLB miss on every access to the array data, but we will still be able to cause a significant number of TLB misses.
+If STRIDE is too high, then we will not be able to cause a TLB miss on every access to the array data.
+If STRIDE is too low, then we will not be able to achieve a TLB miss on every access to the array data, but we will still be able to cause a significant number of TLB misses.",3.0
+cm,"By setting MAX to 65536 and STRIDE to 2048, each access to the 'data' array will result in 
+a TLB miss because the TLB cache can only hold 32 entries, and each access exceeds the
+ cache size. However, since the access remains within a single page, it does not cause a 
+page fault.
+
+In the given code, if MAX is set too high, it can lead to excessive memory usage and
+ cache inefficiency. On the other hand, if MAX is set too low, it can result in data 
+truncation or missing elements in the 'data' array, causing incorrect results or undefined 
+behavior.
+
+If STRIDE is set too high, it can result in frequent TLB misses and increased memory
+ latency. This can negatively impact performance. On the other hand, if STRIDE is set 
+too low, it may lead to cache thrashing and inefficient memory access patterns. ",2.0,"int main() {
+  int *ptr = NULL;
+  *ptr = 10; // This will cause a null pointer dereference!
+  return 0;
+}
+
+The CPU tries to access a memory location that is not mapped in the page table.
+The OS checks the page table for the address.
+If the address is not in the page table, then the OS knows that the pointer is a null pointer and generates a segmentation fault.
+The OS terminates the process and sends a signal to the process.
+",6.0
+c,"int main() {
+    int* ptr = NULL;
+    int value = *ptr;  // Dereferencing a null pointer
+
+    return 0;
+}
+
+a null-pointer dereference triggers a page fault exception, indicating that the program
+ is trying to access memory at address 0, which is not a valid memory location. The OS
+ intercepts the exception, attempts to allocate a physical memory page for the null 
+pointer dereference, but since it's a null pointer, the page fault exception occurs 
+repeatedly, resulting in a crash of the program. The OS terminates the program to 
+prevent it from causing further issues.",6.5,"void SMALLWRITE(int block, char *data) {
+  // Get the disk numbers for the data and parity blocks.
+  int data_disk = block % 4;
+  int parity_disk = 4;
+
+  // Read the data block from disk.
+  char data_block[4096];
+  READ(data_disk, block / 4, data_block);
+
+  // XOR the data block with the parity block.
+  char parity_block[4096];
+  READ(parity_disk, block / 4, parity_block);
+  for (int i = 0; i < 4096; i++) {
+    data_block[i] ^= parity_block[i];
+  }
+
+  // Write the data block back to disk.
+  WRITE(data_disk, block / 4, data_block);
+
+  // Update the parity block.
+  for (int i = 0; i < 4096; i++) {
+    parity_block[i] ^= data_block[i];
+  }
+
+  // Write the parity block back to disk.
+  WRITE(parity_disk, block / 4, parity_block);
+}",8.0
+dc,"void SMALLWRITE(int block, char *data) {
+    char oldData[CHUNK_SIZE];  // To store the original data block
+    char newData[CHUNK_SIZE];  // To store the new data block
+    char parity[CHUNK_SIZE];   // To store the updated parity block
+
+    // Read the original data block and the corresponding parity block
+    READ(block % NUM_DISKS, block / NUM_DISKS * CHUNK_SIZE, oldData);
+    READ(PARITY_DISK, block / NUM_DISKS * CHUNK_SIZE, parity);
+
+    // XOR the old data block with the new data to get the delta
+    XOR(oldData, newData);
+
+    // XOR the delta with the original parity block to get the updated parity
+    XOR(parity, newData);
+
+    // Write the new data block and updated parity block
+    WRITE(block % NUM_DISKS, block / NUM_DISKS * CHUNK_SIZE, data);
+    WRITE(PARITY_DISK, block / NUM_DISKS * CHUNK_SIZE, parity);
+}",6.5,"""The deadlock in the code happens because both threads acquire the lock on v1->lock before acquiring the lock on v2->lock. This means that thread 1 will be blocked waiting for thread 2 to release v2->lock, and thread 2 will be blocked waiting for thread 1 to release v1->lock.
+
+Thread 1                                 Thread 2
+-------------------------------------------------------
+mutex_lock(v1->lock);                 mutex_lock(v2->lock);
+mutex_lock(v2->lock);                 <--- blocked here
+v1[i] = v1[i] + v2[i];
+mutex_unlock(v1->lock);
+<--- blocked here
+mutex_unlock(v2->lock);
+
+
+void vector_add(vector *v1, vector *v2) {
+mutex_lock(v2->lock); mutex_lock(v1->lock);
+for (i = 0; i < v1->size; i++) {
+        v1[i] = v1[i] + v2[i];
+    }
+    mutex_unlock(v2->lock);
+    mutex_unlock(v1->lock);
+}""",6.0
+c,"Both threads are waiting for the other lock to be released, causing a 
+circular wait condition and resulting in a deadlock.
+
+void vector_add(vector *v1, vector *v2) {
+    mutex *first_lock, *second_lock;
+
+    // Determine the order of acquiring locks based on addresses
+    if (v1->lock < v2->lock) {
+        first_lock = v1->lock;
+        second_lock = v2->lock;
+    } else {
+        first_lock = v2->lock;
+        second_lock = v1->lock;
+    }
+
+    mutex_lock(first_lock);
+    mutex_lock(second_lock);
+
+    for (i = 0; i < v1->size; i++) {
+        v1[i] = v1[i] + v2[i];
+    }
+
+    mutex_unlock(second_lock);
+    mutex_unlock(first_lock);
+}",10.0,"""The code doesn't work properly because it doesn't release the lock m before 
+calling sem_wait(). This means that the thread that calls cond_wait() will still 
+hold the lock m when it goes to sleep. This will prevent any other thread from 
+acquiring the lock m, even if the thread that called cond_wait() is no longer running.""",8.0
+c,"Thread A acquires the mutex (mutex_lock(&m)).
+Thread A executes mutex_unlock(&m) to release the mutex.
+Thread A is preempted by another thread, Thread B, before it can execute sem_wait(&c->s).
+Now, if Thread B executes cond_signal() in the meantime, it will signal the condition
+ variable (sem_post(&c->s)). However, since Thread A has not yet reached 
+sem_wait(&c->s), it will miss the signal and continue waiting indefinitely, causing a deadlock.",10.0,"""typedef struct __lock_t {
+int value;
+} lock_t;
+
+void lock_init(lock_t *lock) {
+lock->value = 1;
+}
+
+int lock(lock_t *lock) {
+int old_value = FetchAndSubtract(&lock->value);
+if (old_value == 0) {
+// The lock was already held, so we block
+while (lock->value == 0);
+}
+return old_value;
+}
+
+void unlock(lock_t *lock) {
+lock->value = 1;
+}""",5.0
+c,"typedef struct __lock_t {
+    int flag;
+} lock_t;
+
+void lock_init(lock_t *lock) {
+    lock->flag = 0; // Initialize the lock flag to 0 (unlocked)
+}
+
+void lock(lock_t *lock) {
+    while (FetchAndSubtract(&lock->flag) != 0) {
+        // Spin until the lock is acquired
+    }
+}
+
+void unlock(lock_t *lock) {
+    FetchAndSubtract(&lock->flag); // Release the lock by setting the flag to 0
+}",7.5,"int fd;
+  char buf[1024];
+
+  // Open the file.
+  fd = open(""file.txt"", O_RDONLY);
+  if (fd == -1) {
+    perror(""open"");
+    exit(1);
+  }
+
+  // Read the entire file into memory.
+  while (read(fd, buf, 1024) > 0) {
+    // Do nothing with the data.
+  }
+
+  // Close the file.
+  close(fd);
+
+  return 0;
+---------------
+
+int fd;
+  char buf[1024];
+  int i;
+
+  // Open the file.
+  fd = open(""file.txt"", O_RDONLY);
+  if (fd == -1) {
+    perror(""open"");
+    exit(1);
+  }
+
+  // Read the first 1024 bytes from the file.
+  read(fd, buf, 1024);
+
+  // For each byte in the buffer, do something with it.
+  for (i = 0; i < 1024; i++) {
+    // Do something with the byte.
+  }
+
+  // Close the file.
+  close(fd);",6.0
+c,"int fd;
+    int buffer_size = 4096;  // Adjust the buffer size as per your system
+
+    // Open the file
+    fd = open(FILE_PATH, O_RDONLY);
+    if (fd < 0) {
+        perror(""Failed to open the file"");
+        exit(1);
+    }
+
+    // Read the entire file using a large buffer
+    char *buffer = malloc(buffer_size);
+    ssize_t bytes_read;
+    while ((bytes_read = read(fd, buffer, buffer_size)) > 0) {
+        // Process the data
+        // ...
+    }
+
+int fd;
+    int buffer_size = 4096;  // Adjust the buffer size as per your system
+
+    // Open the file
+    fd = open(FILE_PATH, O_RDONLY);
+    if (fd < 0) {
+        perror(""Failed to open the file"");
+        exit(1);
+    }
+
+    // Read the file sequentially using a small buffer
+    char *buffer = malloc(buffer_size);
+    ssize_t bytes_read;
+    while ((bytes_read = read(fd, buffer, buffer_size)) > 0) {
+        // Process the data
+        // ...
+    }
+",5.5,,

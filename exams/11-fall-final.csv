@@ -1,0 +1,170 @@
+question_type,gpt3.5_ans,gpt3.5_pts_earned,bard_ans,bard_pts_earned
+m,"With a linear page table and no TLB or swapping, each memory access will require accessing
+ the page table entry (PTE) in memory. Since there is no TLB, each memory access will take
+ M units of time. Therefore, a single load instruction will take one memory access to fetch the
+ PTE and another memory access to fetch the actual data. Thus, it takes a total of 2 memory
+ accesses.
+
+With the addition of a TLB, assuming TLB hits, the load instruction can execute much faster.
+ In the best case scenario, the TLB will contain the required mapping for the virtual address,
+ and the memory access can be avoided. Thus, the load instruction can execute in just one 
+memory access, which is fetching the actual data.
+
+With a two-level page table and a page directory, we have an additional level of indirection. 
+Each memory access will require accessing the page directory entry (PDE) and the PTE in 
+memory since all TLB references are considered misses. Therefore, a single load instruction
+ will take two memory accesses to fetch the PDE and PTE and an additional memory access
+ to fetch the actual data. In total, it takes 3 memory accesses.
+
+Considering the possibility of disk accesses due to swapping, the worst-case time for the load
+ instruction will occur when both the PDE and PTE entries are not present in memory, requiring
+ disk accesses to bring them in. This worst case scenario would involve three memory accesses
+ (to fetch the PDE, PTE, and data) and two disk accesses (to retrieve the missing PDE and 
+PTE). Therefore, in this case, the load instruction will take a total of 5 units of time, where 3
+ units are for memory accesses (M units per access) and 2 units are for disk accesses (D 
+units per access).",2.5,"1. No TLB, no swapping: 2 memory accesses.
+2. TLB, no swapping: 1 memory access (best case).
+3. Two-level page table, no swapping: 3 memory accesses (worst case).
+4. Two-level page table, possible swapping: 4 memory accesses + D time units (worst case).",2.0
+m,"a) 2A
+b)  3C + 2A
+c) 3C + 2A",2.5," Best-case time: 2A + T
+2. Worst-case time (3 context switches): 7A + 3C + 2T
+3. Worst-case time (queue-based lock): 5A + 2T",3.0
+m,"a) 3R
+b)  3R
+c) 4R
+d) 3S",4.0,". Single-track disk, FIFO scheduling: 2R
+2. Single-track disk, SATF scheduling: R
+3. Three-track disk, FIFO scheduling: 4S
+4. Three-track disk, SATF scheduling: 3S
+",2.0
+m,"a) D
+b)  48*D
+c) 24*D
+d) 24*D
+e) 12*max(S, R)
+f) 12*max(S, R)
+g) 24*max(S, R)
+h) 24*max(S, R)",2.0,"RAID-0: 12 * D = 12D time units
+RAID-1: 12 * D = 12D time units
+RAID-4: 12 * D + D = 13D time units
+RAID-5: 12 * D + D = 13D time units
+Better disk model
+
+RAID-0: 12 * (S + R) = 12SR time units
+RAID-1: 12 * (S + R) = 12SR time units
+RAID-4: 12 * (S + R) + S = 12SR + S time units
+RAID-5: 12 * (S + R) + S = 12SR + S time units",3.0
+m,"a) 4*D
+b) (12 + 1 + ceil(1012 / 1024)) * D 
+c) 50*D
+d) ???",0.0,"Opening the file /a/b/c/d.txt
+
+1 read of the root directory block
+2 reads of the subdirectories b and c
+1 read of the inode for d.txt
+Total: 4 reads = 4D time units
+Reading the entire file
+
+12 direct reads
+1 indirect read
+Total: 13 reads = 13D time units
+Reading 50 random blocks
+
+50 reads of the double indirect block
+Total: 50 reads = 50D time units
+Closing the file
+
+1 write to the inode
+Total: 1 write = D time units",2.0
+m,"a) S+R+T
+b) S+R+T
+c) S+R+T
+d) S+R+T",3.0,"Appending a block to an existing file with data journaling
+
+1 seek to the journal
+1 write to the journal
+1 seek to the data block
+1 write to the data block
+Total: 3S + 2T time units
+Appending a block to an existing file with metadata journaling
+
+1 seek to the journal
+1 write to the journal
+Total: 2S + T time units
+Appending a block to an existing file without journaling
+
+1 seek to the data block
+1 write to the data block
+Total: 2S + T time units
+Creating a new empty file with data journaling
+
+1 seek to the journal
+1 write to the journal
+Total: 2S + T time units
+",2.5
+m,"a) 100 * T
+b) 100 * T 
+c)  (100 * S) + (100 * T)
+d) ???
+e) (100 * 2 * S) + (100 * T)",3.0,"Newly-created empty file system
+Writing 100 segments: 100 * T time units
+Reading the entire file: 100 * T time units
+Reading the file backwards: 100 * T time units
+Old file system
+Writing 100 segments: 100 * T + S * (number of free segments) time units
+Disk nearly full
+Writing 100 segments: 100 * T + 2S * (number of cleaned segments) time units
+",2.5
+m,"a) S
+b) 100*B
+c) negligible
+d) 100*B
+e) 100*B",4.0,"Opening a file: 3S time units
+Reading a file: 100B time units
+Re-reading the file immediately: S + 0 time units
+Re-reading the file after a little while: S + 100B time units
+Re-reading the file a long time later: S + 100B time units
+",2.0
+m,"a) S
+b) 100*B
+c) 100*B
+d) 100*B
+e) 100*B",0.0,"Opening a file
+
+1 small message (S time units) to open the root directory
+1 small message (S time units) to open the directory /a/b
+1 small message (S time units) to open the file c.txt
+1 small message (S time units) to fetch the file's attributes
+Total: 4S time units
+Reading the file
+
+100 * B time units to read the file
+Total: 100B time units
+Re-reading the file immediately
+
+0 time units to read the file from the cache
+Total: 0 time units
+Re-reading the file after a little while
+
+1 small message (S time units) to ask the server to keep the file in memory
+0 time units to read the file from the cache
+Total: S time units
+Re-reading the file a long time later, after many other memory-consuming programs have run on the client
+
+1 small message (S time units) to ask the server to send the file again
+100B time units to read the file from the server
+Total: S + 100B time units",6.0
+m,"a) T+R
+b) 3T + 3R
+c) T+R
+d) 2T + 2R",4.0,"OS not running on a VMM: T + R time units
+OS running on a VMM: T + R + T + R = 2T + 2R time units
+As you can see, the time it takes to perform a system call on an OS running on a VMM is twice as long as the time it takes to perform a system call on an OS not running on a VMM. This is because the VMM must be involved in every system call, which adds an additional T + R time overhead.
+
+TLB misses
+
+OS not running on a VMM: T + R time units
+OS running on a VMM: T + R + T + R + T + R = 4T + 2R time units
+",8.0

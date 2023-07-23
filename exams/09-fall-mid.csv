@@ -1,0 +1,276 @@
+question_type,gpt3.5_ans,gpt3.5_pts_earned,bard_ans,bard_pts_earned
+s,"(a) Major strengths of Round Robin:
+
+Fairness: Equal opportunities for all processes.
+Responsiveness: Good for interactive applications.
+Simple implementation.
+(b) Major weaknesses of Round Robin:
+
+High overhead: Frequent context switching.
+Inefficiency for long-running processes.
+(c) Changing timeslice to 1 millisecond improved responsiveness and interactivity.
+
+(d) Changing timeslice to 1 millisecond increased context switching overhead.
+
+(e) The Random approach is different from Round Robin. It may be less fair, less 
+responsive, and have higher overhead.",17,"(a) The major strengths of the Round Robin approach are:
+
+It is simple to implement.
+It is fair to all processes, as each process gets a chance to run, even if it is only for a short time.
+It can help to prevent starvation, which is when a process is never given a chance to run.
+(b) The major weaknesses of the Round Robin approach are:
+
+It can be inefficient, as processes may spend a lot of time switching between each other.
+It can favor short processes over long processes.
+(c) Changing the timeslice to 1 millisecond made the LostOS scheduler better in the following ways:
+It reduced the amount of time spent switching between processes, which made the scheduler more efficient.
+It gave all processes a fairer chance to run, even if they were short.
+(d) Changing the timeslice to 1 millisecond made the LostOS scheduler worse in the following ways:
+
+It could lead to starvation, as short processes could be preempted by long processes before they had a chance to finish.
+It could make it difficult for long processes to run, as they would be preempted frequently.
+(e) The Random approach is quite similar to traditional Round Robin, but it has a few key differences:
+
+It is even more fair to all processes, as there is no bias towards short or long processes.
+It is less efficient, as processes may spend more time waiting for their turn to run.",14
+smd,"(a) The base register of segment 0 was set to 0x00000005 (decimal: 5).
+
+(b) The bounds register of segment 0 was set to 0x0000002f (decimal: 47).
+
+(c) The base register of segment 1 was set to 0x0000000c (decimal: 12).
+
+(d) The bounds register of segment 1 was set to 0x00000064 (decimal: 100).
+
+(e) Positives of switching to paging include flexibility, simplified memory 
+management, and protection. Potential negatives include overhead, 
+fragmentation, and increased complexity compared to segmentation.",4,"(a) The base register of segment 0 is set to 0x00000200. This is because the first valid access to 
+segment 0 is at VA 0x0000020c, which is 0x00000200 + 0xc.
+
+(b) The bounds register of segment 0 is set to 0x0000027f. This is because the last valid access to 
+segment 0 is at VA 0x00000261, and the bounds register must be one greater than the highest valid address in the segment.
+
+(c) The base register of segment 1 is set to 0x00000380. This is because the first valid access to 
+segment 1 is at VA 0x000003ec, which is 0x00000380 + 0x6c.
+
+(d) The bounds register of segment 1 is set to 0x000003ff. This is because the last valid access to 
+segment 1 is at VA 0x000003e4, and the bounds register must be one greater than the highest valid address in the segment.
+
+(e) There are several pros and cons to switching from segmentation to paging.
+Pros:
+Paging is more efficient, as it allows the operating system to map multiple virtual addresses to the
+ same physical address. This can help to improve memory utilization.
+Paging is more flexible, as it allows the operating system to create larger virtual address spaces. 
+This can be useful for applications that require a lot of memory.
+Cons:
+Paging can be more complex to implement, as the operating system needs to keep track of the 
+mappings between virtual and physical addresses.
+Paging can introduce additional overhead, as the operating system needs to translate virtual 
+addresses to physical addresses before accessing memory.",7
+smd,"(a) From the given timeline, we can observe that there are three distinct levels
+ of CPU bursts represented by the X's. This suggests that there are three
+ queues in this MLFQ scheduler.
+
+(b) ???
+
+(c) ???
+
+(d) ???
+
+(e) The scheduling policy of MLFQ moves processes to higher priority levels 
+(the topmost queue) sometimes to ensure fairness and responsiveness. When
+ a process exhibits characteristics of interactivity, such as frequent I/O operations
+ or shorter bursts of CPU activity, it is moved to a higher priority queue to provide
+ it with more CPU time and a faster response. This allows interactive processes 
+to be prioritized and prevents them from being overshadowed by long-running 
+CPU-bound processes in lower priority queues.",8,"(a) There are 3 queues in this MLFQ scheduler.
+
+(b) The time slice at the top-most (high priority) queue is 50 milliseconds. This is because job A is 
+running for 50 milliseconds before it is preempted by job B.
+
+(c) The time slice at the bottom-most (low priority) queue is 10 milliseconds. This is because job B is 
+running for 10 milliseconds before it is preempted by job A.
+
+(d) Processes get moved back to the topmost queue every 500 milliseconds. This is because the 
+entire process repeats every 500 milliseconds, and job A is always running at the topmost queue for the first 50 milliseconds of each cycle.
+
+(e) The scheduling policy MLFQ moves processes to higher priority levels (i.e., the topmost queue) 
+sometimes because it wants to give those processes a chance to run for longer periods of time. If a
+ process is always running at the bottom-most queue, it will never get a chance to run for very long.
+ By moving processes to higher priority queues, MLFQ gives them a chance to run for longer periods 
+of time, which can improve their performance.
+
+Here is a diagram that summarizes the scheduling policy of MLFQ:
+
+Topmost queue (high priority):
+Time slice = 50 milliseconds
+Processes are moved to this queue when they have been running for a long time at the bottom-most queue.
+
+Middle queue:
+Time slice = 25 milliseconds
+Processes are moved to this queue from the topmost queue when they have not been running for very long.
+
+Bottom-most queue (low priority):
+Time slice = 10 milliseconds
+Processes are moved to this queue when they first start running.
+",12
+ds,"(a) In general, the valid bit in LostOS is used to indicate whether a particular page table entry 
+(PTE) is valid or not. When the valid bit is set to 1, it means that the corresponding page is valid
+ and can be accessed. When the valid bit is set to 0, it means that the corresponding page is 
+invalid or not present in memory.
+
+(b) The present bit in LostOS is used to indicate whether a particular page is currently present 
+in physical memory or not. When the present bit is set to 1, it means that the page is currently
+ in memory and can be directly accessed. When the present bit is set to 0, it means that the 
+page is not present in memory and may need to be fetched from secondary storage.
+
+(c) Based on the information provided, the likely structure of the page-table entry (PTE) can 
+be depicted as follows:
+
+| valid bit | present bit | timestamp | page-frame number (PFN) |
+---------------------------------------------------------------
+(d) When process 1 accesses virtual page 0, the page table entry (PTE) for that virtual page 
+will be examined. If the valid bit is set to 1, indicating that the page is valid, the present bit will 
+be checked. If the present bit is also set to 1, indicating that the page is currently in memory, 
+the access to the virtual page will proceed. If the present bit is set to 0, indicating that the page
+ is not in memory, a page fault will occur, and the operating system will handle the page fault,
+ which may involve fetching the page from disk into a free physical page frame and updating the PTE.
+
+(e) Similar to (d), when process 1 accesses virtual page 1, the corresponding page table entry 
+(PTE) will be examined. The valid bit and present bit will be checked to determine the accessibility 
+of the page. If the page is valid and present, the access will proceed. Otherwise, a page fault will
+ occur if the page is not present in memory.
+
+(f) When process 1 accesses virtual page 2, the same procedure as in (d) and (e) will be followed.
+ The corresponding page table entry (PTE) will be checked for validity and presence before 
+allowing or handling the access.
+
+(g), (h), and (i) Assuming the given PTE structure, the same procedure as mentioned above will 
+be followed for process 2 accessing virtual pages 0, 1, and 2, respectively. The corresponding 
+PTEs will be checked for validity and presence to determine the accessibility of the pages, and page faults may occur if necessary.",15,"(a) The valid bit is used to indicate whether or not the page is currently in memory. If the valid bit 
+is set to 1, then the page is in memory. If the valid bit is set to 0, then the page is not in memory.
+
+(b) The present bit is used to indicate whether or not the page is currently in the process's address
+ space. If the present bit is set to 1, then the page is in the process's address space. If the present 
+bit is set to 0, then the page is not in the process's address space.
+
+(c) Valid Bit | Present Bit | Timestamp | PFN
+The valid bit is the first bit, followed by the present bit, the timestamp, and the PFN. The timestamp 
+is a 32-bit value that represents the time in seconds since January 1, 1970. The PFN is a 30-bit 
+value that represents the physical address of the page in memory.
+
+(d) Assuming the PTE structure described above, when process 1 accesses virtual page 0, the 
+timestamp will be updated to the current time. The PFN will not be changed, as the page is already in memory.
+
+(e) Assuming the PTE structure described above, when process 1 accesses virtual page 1, the
+ timestamp will be updated to the current time. The PFN will not be changed, as the page is not 
+in memory. The page will be brought into memory from disk.
+
+(f) Assuming the PTE structure described above, when process 1 accesses virtual page 2, the 
+timestamp will be updated to the current time. The PFN will not be changed, as the page is not 
+in memory. The page will be brought into memory from disk.
+
+(g) Assuming the PTE structure described above, when process 2 accesses virtual page 0, the 
+timestamp will be updated to the current time. The PFN will not be changed, as the page is already in memory.
+
+(h) Assuming the PTE structure described above, when process 2 accesses virtual page 1, the
+ timestamp will be updated to the current time. The PFN will not be changed, as the page is already in memory.
+
+(i) Assuming the PTE structure described above, when process 2 accesses virtual page 2, the
+ timestamp will be updated to the current time. The PFN will not be changed, as the page is not 
+in memory. The page will be brought into memory from disk.
+",7
+cs,"(a) With the hardware support of timestamps in the page table, the OS would
+ have to regularly update the timestamps of pages whenever they are referenced.
+ This involves updating the timestamps for each page access, which adds extra
+ overhead to the system. Additionally, maintaining the perfect LRU policy requires 
+accurate tracking of the timestamp for each page, which can be complex and 
+resource-intensive.
+b)
+void replace(int *process, int *VPN) {
+  int startProcess = 0; // Start searching for unused pages from process 0
+  int startVPN = 0; // Start searching for unused pages from virtual page 0
+
+  // Iterate over the page tables
+  for (int i = startProcess; i < MAX_PROCESSES; i++) {
+    page_table_t *pt = p[i];
+    if (pt == NULL) {
+      continue; // Skip non-existent processes
+    }
+
+    // Iterate over the page table entries
+    for (int j = startVPN; j < PAGE_TABLE_ENTRIES; j++) {
+      pte_t *pte = &pt->pagetable[j];
+
+      // Check if the page has not been recently referenced
+      if (pte->referenced == 0) {
+        *process = i;
+        *VPN = j;
+        return; // Found a page to replace, return
+      }
+    }
+
+    // Reset startVPN for the next process to 0
+    startVPN = 0;
+  }
+
+  // If no unused page is found, wrap around and start searching from the beginning
+  // This can occur if all pages have been referenced recently
+  *process = 0;
+  *VPN = 0;
+}",15,"(a) The OS has to do very little to implement perfect LRU with hardware support. The only thing
+ the OS has to do is to check the timestamp of the page when it is referenced. If the timestamp is
+ older than the current time, then the page has not been referenced recently. The OS can then 
+replace the page with a page that has not been referenced recently.
+
+The main problem with this approach is that it is very expensive. The OS has to check the 
+timestamp of every page in the page table every time a page is referenced. This can be a 
+significant overhead, especially in systems with a large number of pages.
+
+(b) Here is the code that picks a page to replace by finding one that has not recently been referenced:
+
+C
+void replace(int *process, int *VPN) {
+  // Start at the beginning of the page table.
+  int i = 0;
+
+  // Loop through the page table, looking for a page that has not been referenced recently.
+  while (i < PAGE_TABLE_ENTRIES) {
+    // Check the reference bit for the current page.
+    if (!p[process]->pagetable[i].referenced) {
+      // The current page has not been referenced recently.
+      *process = process;
+      *VPN = i;
+      break;
+    }
+
+    // Increment the index to the next page.
+    i++;
+  }
+
+  // If we reach the end of the page table, then all of the pages have been referenced recently.
+  if (i == PAGE_TABLE_ENTRIES) {
+    // Pick any page to replace.
+    *process = rand() % MAX_PROCESSES;
+    *VPN = rand() % PAGE_TABLE_ENTRIES;
+  }
+}",12
+m,"(a) False
+(b) True
+(c) False
+(d) False
+(e) True
+(f) True
+(g) True
+(h) False
+(i) False
+(j) True",16,"(a) True.
+(b) True.
+(c) False.
+(d) False.
+(e) True.
+(f) False.
+(g) True.
+(h) False.
+(i) False.
+(j) True.
+",12
