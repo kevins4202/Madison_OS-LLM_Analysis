@@ -1,8 +1,8 @@
-question_type,gpt3.5_pts_earned,bard_pts_earned
-dm,7.0,3.5
-dm,2.0,3.0
-dm,3.0,3.0
-dm,2.0,3.0
-dm,3.0,3.0
-d,5.0,3.0
-d,7.0,7.0
+question_type,os_topic,gpt3.5_pts_earned,bard_pts_earned,gpt4_pts_earned
+dm,p,7.0,3.5,8
+dm,p,2.0,3.0,6
+dm,m,3.0,3.0,3
+dm,m,2.0,3.0,4
+dm,m,3.0,3.0,6
+d,m,5.0,3.0,8.5
+d,md,7.0,7.0,6.5

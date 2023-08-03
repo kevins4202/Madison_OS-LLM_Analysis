@@ -1,6 +1,6 @@
-question_type,gpt3.5_pts_earned,bard_pts_earned
-ms,6.0,6
-ms,11.0,6
-m,14.5,10
-cm,7.5,4
-s,15.0,4
+question_type,os_topic,gpt3.5_pts_earned,bard_pts_earned,gpt4_pts_earned
+ms,p,6.0,6,10
+ms,m,11.0,6,13
+m,m,14.5,10,17
+cm,m,7.5,4,5
+s,md,15.0,4,9

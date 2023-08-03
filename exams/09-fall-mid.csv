@@ -1,7 +1,7 @@
-question_type,gpt3.5_pts_earned,bard_pts_earned
-s,17,14
-smd,4,7
-smd,8,12
-ds,15,7
-cs,15,12
-m,16,12
+question_type,os_topic,gpt3.5_pts_earned,bard_pts_earned,gpt4_pts_earned
+s,p,17,14,17
+smd,m,4,7,7
+smd,p,8,12,13
+ds,m,15,7,15
+cs,m,15,12,15
+m,md,16,12,14

@@ -1,0 +1,6 @@
+character,category
+p,Process Management
+m,Memory Mangagement
+f,File Systems
+d,Device Management
+s,Synchronization and Concurrency
